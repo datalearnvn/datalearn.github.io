@@ -2,4 +2,4 @@ title: DataLearn
 description: Turn Data Into Decisions
 theme: null
 markdown: kramdown
-permalink: /:year/:month/:day/:title/
+permalink: /:categories/:year/:month/:day/:title/
