@@ -3,7 +3,7 @@ layout: default
 ---
 
 <article class="post">
-  <p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
+  <p class="post-meta">{{ page.date | date: "%B %d, %Y" }} • {{ page.categories | join: ", " }}</p>
 
   <h1>{{ page.title }}</h1>
 
