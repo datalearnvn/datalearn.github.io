@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DataLearn Knowledge Graph Demo</title>
+  <meta name="description" content="Interactive data science learning graph demo." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css?v=graph-demo-1" />
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <header class="header">
+    <a class="brand" href="/" aria-label="DataLearn home">
+      <img src="/assets/images/logo-datalearn.png" alt="DataLearn logo" />
+    </a>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/learning/">Learning</a>
+      <a href="/resources/">Resources</a>
+      <a href="/notes/">Notes</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="section knowledge-lab" data-learning-graph>
+      <div class="knowledge-copy">
+        <p class="eyebrow">INTERACTIVE KNOWLEDGE GRAPH</p>
+        <h2>Choose your next data science lesson visually</h2>
+        <p class="muted">Explore SQL, Python, visualization, machine learning, deep learning, and AI systems as a connected learning network. Click any node to see what it unlocks next.</p>
+      </div>
+
+      <div class="knowledge-shell">
+        <div class="graph-toolbar">
+          <div class="graph-filters" data-graph-filters></div>
+          <div class="graph-status">
+            <span data-graph-progress>0/0 lessons mapped</span>
+            <button class="graph-reset" type="button" data-graph-reset>Reset</button>
+          </div>
+        </div>
+
+        <div class="graph-stage">
+          <svg class="learning-graph" data-graph-canvas aria-label="Interactive data science learning graph"></svg>
+          <aside class="lesson-panel" data-lesson-panel>
+            <h3>Loading learning graph</h3>
+            <p>Preparing your roadmap.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/assets/js/learning-graph.js?v=graph-demo-1"></script>
+</body>
+</html>

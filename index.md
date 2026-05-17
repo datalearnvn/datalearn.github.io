@@ -18,6 +18,35 @@ title: Home
   </div>
 </section>
 
+<section class="section knowledge-lab" data-learning-graph>
+  <div class="knowledge-copy">
+    <p class="eyebrow">INTERACTIVE KNOWLEDGE GRAPH</p>
+    <h2>Choose your next data science lesson visually</h2>
+    <p class="muted">Explore SQL, Python, visualization, machine learning, deep learning, and AI systems as a connected learning network. Click any node to see what it unlocks next.</p>
+    <div class="section-actions">
+      <a class="btn btn-secondary" href="/learning/">Open Learning</a>
+    </div>
+  </div>
+
+  <div class="knowledge-shell">
+    <div class="graph-toolbar">
+      <div class="graph-filters" data-graph-filters></div>
+      <div class="graph-status">
+        <span data-graph-progress>0/0 lessons mapped</span>
+        <button class="graph-reset" type="button" data-graph-reset>Reset</button>
+      </div>
+    </div>
+
+    <div class="graph-stage">
+      <svg class="learning-graph" data-graph-canvas aria-label="Interactive data science learning graph"></svg>
+      <aside class="lesson-panel" data-lesson-panel>
+        <h3>Loading learning graph</h3>
+        <p>Preparing your roadmap.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
 <section class="section">
   <div class="section-heading">
     <p class="eyebrow">CORE CAPABILITIES</p>
