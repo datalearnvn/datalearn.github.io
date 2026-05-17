@@ -69,6 +69,38 @@ title: Home
   </div>
 </section>
 
+<section class="section" id="resources">
+  <div class="section-heading">
+    <p class="eyebrow">LEARNING RESOURCES</p>
+    <h2>Visual pages and interactive lessons</h2>
+    <p class="muted">Open standalone HTML learning pages from the main DataLearn website, then return home anytime.</p>
+  </div>
+
+  <div class="resource-grid">
+    <a class="resource-card" href="/m50-machine-learning-slides.html">
+      <span>Interactive Slides</span>
+      <h3>M50 Machine Learning Concepts</h3>
+      <p>A slide-by-slide machine learning viewer with simple English explanations, zoom, and drag-to-inspect images.</p>
+    </a>
+
+    <a class="resource-card" href="/spark-visual-gallery.html">
+      <span>Visual Gallery</span>
+      <h3>Apache Spark Visual Gallery</h3>
+      <p>A visual walkthrough of Spark ideas, distributed execution, transformations, actions, joins, and optimization.</p>
+    </a>
+
+    <a class="resource-card" href="/spark-visual-gallery-clear.html">
+      <span>Clean Version</span>
+      <h3>Apache Spark Clear Gallery</h3>
+      <p>A simpler Spark gallery layout for quick reading and sharing.</p>
+    </a>
+  </div>
+
+  <div class="section-actions">
+    <a class="btn btn-secondary" href="/resources/">View All Resources</a>
+  </div>
+</section>
+
 <section class="section split-section">
   <div>
     <p class="eyebrow">LATEST NOTES</p>

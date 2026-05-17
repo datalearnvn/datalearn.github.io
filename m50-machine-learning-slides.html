@@ -134,6 +134,7 @@
     }
 
     .icon-btn,
+    .home-link,
     .thumb {
       display: grid;
       place-items: center;
@@ -151,7 +152,18 @@
       font-size: 20px;
     }
 
+    .home-link {
+      min-width: 74px;
+      height: 42px;
+      padding: 0 12px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
     .icon-btn:hover,
+    .home-link:hover,
     .thumb:hover {
       transform: translateY(-1px);
       border-color: rgba(33, 212, 253, 0.72);
@@ -159,6 +171,7 @@
     }
 
     .icon-btn:focus-visible,
+    .home-link:focus-visible,
     .thumb:focus-visible,
     select:focus-visible {
       outline: 2px solid var(--amber);
@@ -505,6 +518,7 @@
       </div>
 
       <div class="controls" aria-label="Slide controls">
+        <a class="home-link" href="/" title="Back to DataLearn home" aria-label="Back to DataLearn home">Home</a>
         <button class="icon-btn" id="prevBtn" type="button" title="Previous slide" aria-label="Previous slide">&lsaquo;</button>
         <select id="slideSelect" aria-label="Choose a slide"></select>
         <button class="icon-btn" id="nextBtn" type="button" title="Next slide" aria-label="Next slide">&rsaquo;</button>
