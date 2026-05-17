@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M50 Machine Learning Slides</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070a12;
+      --panel: rgba(10, 18, 31, 0.82);
+      --panel-strong: rgba(15, 27, 45, 0.96);
+      --line: rgba(126, 211, 255, 0.24);
+      --text: #eef7ff;
+      --muted: #a8bad1;
+      --cyan: #21d4fd;
+      --green: #76f36b;
+      --amber: #ffd166;
+      --pink: #ff5fb9;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(33, 212, 253, 0.16), transparent 28%),
+        radial-gradient(circle at 80% 18%, rgba(255, 95, 185, 0.11), transparent 27%),
+        linear-gradient(135deg, #050712 0%, #091524 50%, #080914 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button,
+    select {
+      font: inherit;
+    }
+
+    .app {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 14px;
+      height: 100vh;
+      padding: 18px;
+    }
+
+    .topbar,
+    .bottombar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 56px;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(5, 10, 18, 0.62);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 260px;
+    }
+
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      border: 1px solid rgba(33, 212, 253, 0.45);
+      background: linear-gradient(145deg, rgba(33, 212, 253, 0.22), rgba(118, 243, 107, 0.08));
+      color: var(--cyan);
+      font-weight: 900;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .progress-wrap {
+      flex: 1;
+      max-width: 560px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .progress {
+      height: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .progress span {
+      display: block;
+      width: 7.14%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--cyan), var(--green), var(--amber));
+      transition: width 220ms ease;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn,
+    .thumb {
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(126, 211, 255, 0.25);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      font-size: 20px;
+    }
+
+    .icon-btn:hover,
+    .thumb:hover {
+      transform: translateY(-1px);
+      border-color: rgba(33, 212, 253, 0.72);
+      background: rgba(33, 212, 253, 0.14);
+    }
+
+    .icon-btn:focus-visible,
+    .thumb:focus-visible,
+    select:focus-visible {
+      outline: 2px solid var(--amber);
+      outline-offset: 2px;
+    }
+
+    select {
+      width: 210px;
+      height: 42px;
+      border: 1px solid rgba(126, 211, 255, 0.25);
+      border-radius: 8px;
+      background: var(--panel-strong);
+      color: var(--text);
+      padding: 0 10px;
+    }
+
+    .stage {
+      display: grid;
+      grid-template-columns: minmax(0, 1.52fr) minmax(320px, 0.68fr);
+      gap: 16px;
+      min-height: 0;
+    }
+
+    .slide-card,
+    .notes-card {
+      min-height: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .slide-card {
+      display: grid;
+      place-items: center;
+      padding: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .image-viewport {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 6px;
+      background: #02050a;
+      touch-action: none;
+      cursor: zoom-in;
+    }
+
+    .image-viewport.is-zoomed {
+      cursor: grab;
+    }
+
+    .image-viewport.is-dragging {
+      cursor: grabbing;
+    }
+
+    .slide-card img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transform: translate3d(var(--pan-x, 0px), var(--pan-y, 0px), 0) scale(var(--zoom, 1));
+      transform-origin: center center;
+      transition: transform 140ms ease;
+      user-select: none;
+      -webkit-user-drag: none;
+      will-change: transform;
+    }
+
+    .image-viewport.is-dragging img {
+      transition: none;
+    }
+
+    .zoom-tools {
+      position: absolute;
+      right: 22px;
+      bottom: 22px;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px;
+      border: 1px solid rgba(126, 211, 255, 0.24);
+      border-radius: 8px;
+      background: rgba(4, 8, 16, 0.78);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.36);
+      backdrop-filter: blur(14px);
+    }
+
+    .zoom-btn {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(126, 211, 255, 0.25);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    #zoomResetBtn {
+      width: 44px;
+      font-size: 12px;
+    }
+
+    .zoom-btn:hover {
+      border-color: rgba(33, 212, 253, 0.72);
+      background: rgba(33, 212, 253, 0.14);
+    }
+
+    .zoom-value {
+      min-width: 48px;
+      color: #d8edff;
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .notes-card {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      padding: 22px;
+      overflow: hidden;
+    }
+
+    .kicker {
+      margin: 0 0 8px;
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .notes-card h2 {
+      margin: 0;
+      font-size: clamp(26px, 3vw, 44px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .explain {
+      min-height: 0;
+      margin-top: 22px;
+      overflow: auto;
+      padding-right: 6px;
+    }
+
+    .explain::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .explain::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+      background: rgba(126, 211, 255, 0.32);
+    }
+
+    .plain {
+      margin: 0 0 18px;
+      color: #dcecff;
+      font-size: 18px;
+      line-height: 1.48;
+    }
+
+    .takeaways {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .takeaways li {
+      display: grid;
+      grid-template-columns: 10px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.42;
+    }
+
+    .takeaways li::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      margin-top: 7px;
+      border-radius: 50%;
+      background: var(--accent, var(--cyan));
+      box-shadow: 0 0 18px var(--accent, var(--cyan));
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      padding: 7px 9px;
+      border: 1px solid rgba(126, 211, 255, 0.2);
+      border-radius: 999px;
+      color: #d8edff;
+      background: rgba(255, 255, 255, 0.06);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .thumbs {
+      display: grid;
+      grid-template-columns: repeat(14, minmax(36px, 1fr));
+      gap: 7px;
+      width: 100%;
+    }
+
+    .thumb {
+      min-width: 0;
+      height: 42px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .thumb[aria-current="true"] {
+      border-color: rgba(118, 243, 107, 0.8);
+      color: var(--text);
+      background: linear-gradient(145deg, rgba(33, 212, 253, 0.28), rgba(118, 243, 107, 0.12));
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        padding: 10px;
+        gap: 10px;
+      }
+
+      .topbar {
+        align-items: stretch;
+        flex-wrap: wrap;
+      }
+
+      .brand {
+        min-width: 0;
+        flex: 1 1 280px;
+      }
+
+      .progress-wrap {
+        order: 3;
+        flex-basis: 100%;
+        max-width: none;
+      }
+
+      .stage {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 54%) minmax(0, 46%);
+      }
+
+      .notes-card {
+        padding: 16px;
+      }
+
+      .plain {
+        font-size: 15px;
+      }
+
+      .takeaways li {
+        font-size: 13px;
+      }
+
+      .bottombar {
+        overflow: auto hidden;
+      }
+
+      .thumbs {
+        grid-template-columns: repeat(14, 42px);
+        min-width: max-content;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        min-height: 0;
+      }
+
+      .controls {
+        width: 100%;
+      }
+
+      select {
+        flex: 1;
+        width: auto;
+      }
+
+      .stage {
+        grid-template-rows: minmax(0, 46%) minmax(0, 54%);
+      }
+
+      .zoom-tools {
+        right: 16px;
+        bottom: 16px;
+      }
+
+      .notes-card h2 {
+        font-size: 23px;
+      }
+
+      .subtitle,
+      .tag-row {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app" aria-label="M50 Machine Learning slide viewer">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">M50</div>
+        <div>
+          <h1>Machine Learning Concepts</h1>
+          <p>Simple English explanations for each visual slide</p>
+        </div>
+      </div>
+
+      <div class="progress-wrap" aria-label="Slide progress">
+        <div class="progress-label">
+          <span id="progressText">Slide 1 of 14</span>
+          <span id="topicText">Landscape</span>
+        </div>
+        <div class="progress"><span id="progressBar"></span></div>
+      </div>
+
+      <div class="controls" aria-label="Slide controls">
+        <button class="icon-btn" id="prevBtn" type="button" title="Previous slide" aria-label="Previous slide">&lsaquo;</button>
+        <select id="slideSelect" aria-label="Choose a slide"></select>
+        <button class="icon-btn" id="nextBtn" type="button" title="Next slide" aria-label="Next slide">&rsaquo;</button>
+      </div>
+    </header>
+
+    <section class="stage">
+      <figure class="slide-card">
+        <div class="image-viewport" id="imageViewport" aria-label="Zoomable slide image area">
+          <img id="slideImage" src="assets/m50/coderschool_M50_01.png" alt="The Landscape of Machine Learning slide" draggable="false" />
+        </div>
+        <div class="zoom-tools" aria-label="Image zoom controls">
+          <button class="zoom-btn" id="zoomOutBtn" type="button" title="Zoom out" aria-label="Zoom out">-</button>
+          <span class="zoom-value" id="zoomValue">100%</span>
+          <button class="zoom-btn" id="zoomInBtn" type="button" title="Zoom in" aria-label="Zoom in">+</button>
+          <button class="zoom-btn" id="zoomResetBtn" type="button" title="Reset zoom" aria-label="Reset zoom">1:1</button>
+        </div>
+      </figure>
+
+      <aside class="notes-card" aria-live="polite">
+        <div>
+          <p class="kicker" id="kicker">Landscape</p>
+          <h2 id="title">The Landscape of Machine Learning</h2>
+          <p class="subtitle" id="subtitle">How modern AI systems learn from data, patterns, and environments.</p>
+        </div>
+
+        <div class="explain">
+          <p class="plain" id="plainText"></p>
+          <ul class="takeaways" id="takeaways"></ul>
+          <div class="tag-row" id="tags"></div>
+        </div>
+      </aside>
+    </section>
+
+    <nav class="bottombar" aria-label="Slide thumbnails">
+      <div class="thumbs" id="thumbs"></div>
+    </nav>
+  </main>
+
+  <script>
+    const slides = [
+      {
+        image: "assets/m50/coderschool_M50_01.png",
+        topic: "Landscape",
+        title: "The Landscape of Machine Learning",
+        subtitle: "How modern AI systems learn from data, patterns, and environments.",
+        plain: "Machine learning is not one single technique. It is a family of approaches that turn data into predictions, patterns, actions, and better decisions.",
+        takeaways: [
+          "Supervised learning uses labeled examples to learn how inputs map to known outputs.",
+          "Unsupervised learning searches for structure when labels are not available.",
+          "Reinforcement learning improves by taking actions and learning from rewards."
+        ],
+        tags: ["Supervised", "Unsupervised", "Reinforcement"]
+      },
+      {
+        image: "assets/m50/coderschool_M50_02.png",
+        topic: "Supervised",
+        title: "Supervised Learning",
+        subtitle: "Learning from labeled historical data.",
+        plain: "In supervised learning, the model studies examples where the correct answer is already known. After training, it can make predictions for new cases.",
+        takeaways: [
+          "The input contains historical data, features, and labeled outcomes.",
+          "The model learns relationships between features and answers.",
+          "Common uses include price prediction, fraud detection, churn prediction, and recommendations."
+        ],
+        tags: ["Labels", "Features", "Predictions"]
+      },
+      {
+        image: "assets/m50/coderschool_M50_03.png",
+        topic: "Regression",
+        title: "Regression Problems",
+        subtitle: "Predicting continuous numerical values.",
+        plain: "Regression is used when the answer is a number, not a category. The model learns a trend from data and estimates a value for new input.",
+        takeaways: [
+          "The output can be a price, temperature, demand level, or stock estimate.",
+          "The model looks for relationships between input variables and the target value.",
+          "Good regression models help people forecast and plan with measurable numbers."
+        ],
+        tags: ["Numbers", "Forecasting", "Trends"]
+      },
+      {
+        image: "assets/m50/coderschool_M50_04.png",
+        topic: "Classification",
+        title: "Classification Problems",
+        subtitle: "Predicting categories and classes.",
+        plain: "Classification is used when the answer belongs to a group. The model separates examples into classes and often gives a probability for each class.",
+        takeaways: [
+          "The output is discrete, such as spam or not spam, disease type, or sentiment.",
+          "Decision boundaries show where the model separates one class from another.",
+          "Probabilities help explain how confident the model is about its prediction."
+        ],
+        tags: ["Categories", "Decision Boundary", "Probability"]
+      },
+      {
+        image: "assets/m50/coderschool_M50_05.png",
+        topic: "Anomaly",
+        title: "One-Class Classification",
+        subtitle: "Learning normal behavior to detect anomalies.",
+        plain: "One-class classification learns what normal data looks like. Anything far outside that normal pattern can be treated as unusual or risky.",
+        takeaways: [
+          "The model is trained mostly on normal examples.",
+          "Outliers are flagged because they do not fit the learned boundary.",
+          "This is useful for fraud, network attacks, equipment failure, and manufacturing defects."
+        ],
+        tags: ["Normal vs Abnormal", "Outliers", "Risk"]
+      },
+      {
+        image: "assets/m50/coderschool_M50_06.png",
+        topic: "Binary",
+        title: "Binary Classification",
+        subtitle: "Predicting between two possible outcomes.",
+        plain: "Binary classification chooses between two classes, usually yes or no. The model learns a boundary that separates negative examples from positive examples.",
+        takeaways: [
+          "Class 0 may mean normal, healthy, rejected, or inactive.",
+          "Class 1 may mean fraud, disease, approved, or active.",
+          "Models such as logistic regression, random forest, XGBoost, and neural networks can solve binary tasks."
+        ],
+        tags: ["Yes or No", "Risk Scoring", "Two Classes"]
+      },
+      {
+        image: "assets/m50/coderschool_M50_07.png",
+        topic: "Multi-Class",
+        title: "Multi-Class Classification",
+        subtitle: "Predicting one class among many categories.",
+        plain: "Multi-class classification picks exactly one label from several possible labels. For example, an image can be classified as cat, dog, bird, car, or airplane.",
+        takeaways: [
+          "One input receives one final category.",
+          "The model compares several possible classes and chooses the most likely one.",
+          "Typical uses include image recognition, document classification, product categories, and language detection."
+        ],
+        tags: ["One Category", "Recognition", "Many Classes"]
+      },
+      {
+        image: "assets/m50/coderschool_M50_08.png",
+        topic: "Multi-Label",
+        title: "Multi-Label Classification",
+        subtitle: "Predicting multiple labels simultaneously.",
+        plain: "Multi-label classification allows several answers to be correct at the same time. One beach photo can be labeled beach, sunset, people, ocean, and vacation.",
+        takeaways: [
+          "Labels can overlap, so they are not mutually exclusive.",
+          "Each label gets its own probability score.",
+          "This works well for image tagging, recommendations, music categories, medical diagnosis, and topic tagging."
+        ],
+        tags: ["Multiple Labels", "Overlapping", "Context"]
+      },
+      {
+        image: "assets/m50/coderschool_M50_09.png",
+        topic: "Unsupervised",
+        title: "Unsupervised Learning",
+        subtitle: "Discovering hidden structures without labels.",
+        plain: "Unsupervised learning starts with raw data and no correct answers. The algorithm searches for patterns, groups, and structure on its own.",
+        takeaways: [
+          "There are no labels to guide the model during learning.",
+          "The goal is discovery: find similarities, hidden relationships, or unusual records.",
+          "Common tasks include clustering, anomaly detection, dimensionality reduction, and topic modeling."
+        ],
+        tags: ["No Labels", "Discovery", "Hidden Structure"]
+      },
+      {
+        image: "assets/m50/coderschool_M50_10.png",
+        topic: "Clustering",
+        title: "Clustering",
+        subtitle: "Grouping similar observations together.",
+        plain: "Clustering groups data points that look similar. It helps reveal natural segments that may not be obvious from the raw data.",
+        takeaways: [
+          "K-means, DBSCAN, hierarchical clustering, and Gaussian mixtures are common methods.",
+          "Clusters can represent customer segments, product groups, behavior patterns, or hidden communities.",
+          "Businesses use clustering for personalization, fraud pattern discovery, and recommendations."
+        ],
+        tags: ["Segments", "Groups", "Similarity"]
+      },
+      {
+        image: "assets/m50/coderschool_M50_11.png",
+        topic: "Reinforcement",
+        title: "Reinforcement Learning",
+        subtitle: "Learning through rewards and interaction.",
+        plain: "Reinforcement learning trains an agent to make decisions. The agent takes actions, observes what happens, receives rewards, and improves its policy over time.",
+        takeaways: [
+          "The core loop is agent, action, environment, reward, and learning.",
+          "The goal is to maximize long-term reward, not just the next immediate result.",
+          "It is useful for autonomous systems, games, robotics, and dynamic decision-making."
+        ],
+        tags: ["Agent", "Reward", "Policy"]
+      },
+      {
+        image: "assets/m50/coderschool_M50_12.png",
+        topic: "Real World RL",
+        title: "Real-World Reinforcement Learning",
+        subtitle: "Where autonomous AI systems optimize decisions.",
+        plain: "In real life, reinforcement learning is used when decisions happen in sequence and the best action depends on changing conditions.",
+        takeaways: [
+          "Autonomous vehicles, robots, games, trading, recommendations, pricing, and warehouses all need adaptive decisions.",
+          "The system learns from feedback and updates its strategy as the environment changes.",
+          "RL is powerful when long-term value matters more than a single prediction."
+        ],
+        tags: ["Autonomy", "Optimization", "Feedback"]
+      },
+      {
+        image: "assets/m50/coderschool_M50_13.png",
+        topic: "Applications",
+        title: "Machine Learning in the Real World",
+        subtitle: "How AI transforms industries and decisions.",
+        plain: "Machine learning is already part of modern business operations. It improves accuracy, automates decisions, reduces risk, and finds opportunities at scale.",
+        takeaways: [
+          "Banking uses ML for credit scoring, fraud detection, and anti-money laundering.",
+          "Healthcare uses ML for diagnosis, imaging, and patient risk prediction.",
+          "Ecommerce, logistics, and manufacturing use ML for recommendations, pricing, routing, forecasting, quality control, and maintenance."
+        ],
+        tags: ["Banking", "Healthcare", "Logistics", "Manufacturing"]
+      },
+      {
+        image: "assets/m50/coderschool_M50_14.png",
+        topic: "Evolution",
+        title: "The Evolution of Machine Learning",
+        subtitle: "From prediction systems to autonomous intelligence.",
+        plain: "The main ML paradigms work together. Prediction, discovery, and optimization combine to create systems that learn, adapt, and improve continuously.",
+        takeaways: [
+          "Supervised learning helps systems predict outcomes from labeled data.",
+          "Unsupervised learning helps systems discover structure from unlabeled data.",
+          "Reinforcement learning helps systems choose actions and optimize long-term results."
+        ],
+        tags: ["Prediction", "Discovery", "Action", "Autonomy"]
+      }
+    ];
+
+    const state = { index: 0, zoom: 1, panX: 0, panY: 0, dragging: false, startX: 0, startY: 0, originX: 0, originY: 0 };
+    const minZoom = 1;
+    const maxZoom = 4;
+    const zoomStep = 0.35;
+    const image = document.querySelector("#slideImage");
+    const imageViewport = document.querySelector("#imageViewport");
+    const progressText = document.querySelector("#progressText");
+    const topicText = document.querySelector("#topicText");
+    const progressBar = document.querySelector("#progressBar");
+    const kicker = document.querySelector("#kicker");
+    const title = document.querySelector("#title");
+    const subtitle = document.querySelector("#subtitle");
+    const plainText = document.querySelector("#plainText");
+    const takeaways = document.querySelector("#takeaways");
+    const tags = document.querySelector("#tags");
+    const select = document.querySelector("#slideSelect");
+    const thumbs = document.querySelector("#thumbs");
+    const zoomValue = document.querySelector("#zoomValue");
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function getPanBounds() {
+      const rect = imageViewport.getBoundingClientRect();
+      const maxX = Math.max(0, (rect.width * state.zoom - rect.width) / 2);
+      const maxY = Math.max(0, (rect.height * state.zoom - rect.height) / 2);
+      return { maxX, maxY };
+    }
+
+    function applyZoom() {
+      const { maxX, maxY } = getPanBounds();
+      state.panX = clamp(state.panX, -maxX, maxX);
+      state.panY = clamp(state.panY, -maxY, maxY);
+      image.style.setProperty("--zoom", state.zoom);
+      image.style.setProperty("--pan-x", `${state.panX}px`);
+      image.style.setProperty("--pan-y", `${state.panY}px`);
+      zoomValue.textContent = `${Math.round(state.zoom * 100)}%`;
+      imageViewport.classList.toggle("is-zoomed", state.zoom > minZoom);
+    }
+
+    function setZoom(nextZoom) {
+      state.zoom = clamp(nextZoom, minZoom, maxZoom);
+      if (state.zoom === minZoom) {
+        state.panX = 0;
+        state.panY = 0;
+      }
+      applyZoom();
+    }
+
+    function resetZoom() {
+      state.zoom = 1;
+      state.panX = 0;
+      state.panY = 0;
+      applyZoom();
+    }
+
+    function createControls() {
+      slides.forEach((slide, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = `${String(index + 1).padStart(2, "0")} · ${slide.topic}`;
+        select.appendChild(option);
+
+        const button = document.createElement("button");
+        button.className = "thumb";
+        button.type = "button";
+        button.textContent = String(index + 1).padStart(2, "0");
+        button.setAttribute("aria-label", `Open slide ${index + 1}: ${slide.title}`);
+        button.addEventListener("click", () => showSlide(index));
+        thumbs.appendChild(button);
+      });
+    }
+
+    function showSlide(index) {
+      state.index = (index + slides.length) % slides.length;
+      const slide = slides[state.index];
+      resetZoom();
+      image.src = slide.image;
+      image.alt = `${slide.title} slide`;
+      progressText.textContent = `Slide ${state.index + 1} of ${slides.length}`;
+      topicText.textContent = slide.topic;
+      progressBar.style.width = `${((state.index + 1) / slides.length) * 100}%`;
+      kicker.textContent = slide.topic;
+      title.textContent = slide.title;
+      subtitle.textContent = slide.subtitle;
+      plainText.textContent = slide.plain;
+      select.value = String(state.index);
+
+      takeaways.replaceChildren(...slide.takeaways.map((item, itemIndex) => {
+        const li = document.createElement("li");
+        const accents = ["var(--cyan)", "var(--green)", "var(--amber)", "var(--pink)"];
+        li.style.setProperty("--accent", accents[itemIndex % accents.length]);
+        li.textContent = item;
+        return li;
+      }));
+
+      tags.replaceChildren(...slide.tags.map((label) => {
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = label;
+        return tag;
+      }));
+
+      [...thumbs.children].forEach((button, itemIndex) => {
+        button.setAttribute("aria-current", itemIndex === state.index ? "true" : "false");
+      });
+    }
+
+    document.querySelector("#prevBtn").addEventListener("click", () => showSlide(state.index - 1));
+    document.querySelector("#nextBtn").addEventListener("click", () => showSlide(state.index + 1));
+    document.querySelector("#zoomOutBtn").addEventListener("click", () => setZoom(state.zoom - zoomStep));
+    document.querySelector("#zoomInBtn").addEventListener("click", () => setZoom(state.zoom + zoomStep));
+    document.querySelector("#zoomResetBtn").addEventListener("click", resetZoom);
+    select.addEventListener("change", (event) => showSlide(Number(event.target.value)));
+    imageViewport.addEventListener("dblclick", () => setZoom(state.zoom === minZoom ? 2.1 : 1));
+    imageViewport.addEventListener("wheel", (event) => {
+      event.preventDefault();
+      setZoom(state.zoom + (event.deltaY < 0 ? 0.18 : -0.18));
+    }, { passive: false });
+    imageViewport.addEventListener("pointerdown", (event) => {
+      if (state.zoom === minZoom) return;
+      state.dragging = true;
+      state.startX = event.clientX;
+      state.startY = event.clientY;
+      state.originX = state.panX;
+      state.originY = state.panY;
+      imageViewport.classList.add("is-dragging");
+      imageViewport.setPointerCapture(event.pointerId);
+    });
+    imageViewport.addEventListener("pointermove", (event) => {
+      if (!state.dragging) return;
+      state.panX = state.originX + event.clientX - state.startX;
+      state.panY = state.originY + event.clientY - state.startY;
+      applyZoom();
+    });
+    imageViewport.addEventListener("pointerup", (event) => {
+      state.dragging = false;
+      imageViewport.classList.remove("is-dragging");
+      if (imageViewport.hasPointerCapture(event.pointerId)) imageViewport.releasePointerCapture(event.pointerId);
+    });
+    imageViewport.addEventListener("pointercancel", () => {
+      state.dragging = false;
+      imageViewport.classList.remove("is-dragging");
+    });
+    window.addEventListener("resize", applyZoom);
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "+" || event.key === "=") setZoom(state.zoom + zoomStep);
+      if (event.key === "-" || event.key === "_") setZoom(state.zoom - zoomStep);
+      if (event.key === "0") resetZoom();
+      if (event.key === "ArrowRight" || event.key === "PageDown") showSlide(state.index + 1);
+      if (event.key === "ArrowLeft" || event.key === "PageUp") showSlide(state.index - 1);
+      if (event.key === "Home") showSlide(0);
+      if (event.key === "End") showSlide(slides.length - 1);
+    });
+
+    createControls();
+    showSlide(0);
+  </script>
+</body>
+</html>
